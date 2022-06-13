@@ -68,11 +68,11 @@ while len(PairList)>0:
      xy=[x,y]
      PairList.pop(0)
      UsedList=[n for n in KList if n not in xy]
-     for t in range(6):
-         Yt=VectorFct(MarketData,y,t+1)
-         Z=MatrixZFct(MarketData,UsedList,t)[0]
-         X=VectorFct(MarketData,x,t)
-         Y=VectorFct(MarketData,y,t)
+     for t in range(1,6):
+         Yt=VectorFct(MarketData,y,t)
+         Z=MatrixZFct(MarketData,UsedList,t-1)[0]
+         X=VectorFct(MarketData,x,t-1)
+         Y=VectorFct(MarketData,y,t-1)
          Elmnt1=np.linalg.det(np.cov(np.concatenate((Yt, Z), axis=0)))
          Elmnt2 = np.linalg.det(np.cov(np.concatenate((X,Y, Z), axis=0)))
          Elmnt3 = np.linalg.det(np.cov(np.concatenate((Y, Z), axis=0)))
@@ -80,6 +80,8 @@ while len(PairList)>0:
          temp+=np.log((Elmnt1*Elmnt2)/(Elmnt3*Elmnt4))
      DI=0.5*temp
      DIList.append(DI)
+print(PairList1)
+print(DIList)
 
 
 
@@ -89,9 +91,7 @@ for i in range(len(DIList)):
         Edgesxy.append(1)
     else:
         Edgesxy.append(0)
-#print(Edgesxy)
 
-#print(PairList1[1])
 LinkedNode=[]
 DG = nx.DiGraph()
 for i in range(len(Edgesxy)):
@@ -99,7 +99,7 @@ for i in range(len(Edgesxy)):
         LinkedNode.append(PairList1[i])
 print(LinkedNode)
 DG.add_edges_from(LinkedNode)
-nx.draw(DG)
+nx.draw_circular(DG, with_labels=True)
 plt.savefig("GraphEx2.png")
 
 
