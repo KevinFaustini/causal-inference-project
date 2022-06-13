@@ -5,7 +5,8 @@ import networkx as nx
 import matplotlib.pyplot as plt 
 
 
-path_D1 = '/Users/hannamuller/Desktop/kevin/CI project/D1.mat'
+#path_D1 = '/Users/hannamuller/Desktop/kevin/CI project/D1.mat'
+path_D1='/Users/sybil/PycharmProjects/causal-inference-project/D1.mat'
 # path_D2 = '/Users/hannamuller/Desktop/kevin/CI project/D2.mat'
 # path_D3 = '/Users/hannamuller/Desktop/kevin/CI project/D3.mat'
 # path_D4 = '/Users/hannamuller/Desktop/kevin/CI project/D4.mat'
