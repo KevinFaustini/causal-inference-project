@@ -3,6 +3,11 @@ from helpers import mat_to_ndarray
 import scipy.io
 import numpy as np
 from itertools import combinations
+import itertools
+import networkx as nx
+import matplotlib.pyplot as plt
+from matplotlib import figure
+
 
 MarketPath='/Users/sybil/PycharmProjects/causal-inference-project/market.mat'
 Data=scipy.io.loadmat(MarketPath)
@@ -50,15 +55,9 @@ def MatrixZFct(D,list,t):
 
 
 KList=[0,1,2,3,4,5,6,7,8,9,10,11]
-Klist2=[2,3,4,5,6,7,8,9,10,11]
-PairList1=list(combinations(KList, 2))
-PairList=list(combinations(KList, 2))
-#
-# Yt = VectorFct(MarketData,1,2)
-# Z = MatrixZFct(MarketData, Klist2,2)[0]
-# X=VectorFct(MarketData,0,2)
-#
-# print(len(np.concatenate((Yt,Z,X),axis=0)))
+PairList1=list(itertools.permutations(KList, 2))
+PairList=list(itertools.permutations(KList, 2))
+
 
 temp=0
 DIList=[]
@@ -81,49 +80,28 @@ while len(PairList)>0:
          temp+=np.log((Elmnt1*Elmnt2)/(Elmnt3*Elmnt4))
      DI=0.5*temp
      DIList.append(DI)
-print(len(DIList))
-print(len(PairList1))
 
 
 
-        # Elmnt1= np.linalg.det(np.cov(Yt, Z, bias=True))
-        # Elmnt2=np.linalg.det(np.cov(Y,Z,X, bias=True))
-        # Elmnt3=np.linalg.det(np.cov(Y,Z, bias=True))
-        # Elmnt4= np.linalg.det(np.cov(Yt,Z,X, bias=True))
+Edgesxy=[]
+for i in range(len(DIList)):
+    if DIList[i]>0.5:
+        Edgesxy.append(1)
+    else:
+        Edgesxy.append(0)
+#print(Edgesxy)
 
-    #print(DI)
-    #DIList.append(DI)
+#print(PairList1[1])
+LinkedNode=[]
+DG = nx.DiGraph()
+for i in range(len(Edgesxy)):
+    if Edgesxy[i]==1:
+        LinkedNode.append(PairList1[i])
+print(LinkedNode)
+DG.add_edges_from(LinkedNode)
+nx.draw(DG)
+plt.savefig("GraphEx2.png")
 
-
-
-
-
-# Z=MatrixZFct(MarketData, [2,3,4,5,6,7,8,9,10,11],0)[0]
-# Y=VectorFct(MarketData,0,0)[0]
-#
-# CovMatrix=np.cov(Y,Z, bias=True)
-#
-# print(np.linalg.det(CovMatrix))
-#
-#
-# Now we contruct the matrix of y and z:
-# print(MatrixZFct(MarketData,liste,1))
-# CovMatrix=np.cov(VectorYArray,MatrixZArray, bias=True)
-#
-#
-# #
-# # def Merge2Matrix(y,z):
-# #     Merged=[]
-# #     Merged.append(y)
-# #     Merged.append(z)
-# #     MergedArray = np.array(Merged)
-# #     return MergedArray
-#
-# # Y=VectorFct(MarketData,0,1)
-# # Z=MatrixZFct(MarketData,[2,3,4,5,6,7,8,9,10,11],1)
-# # print(Merge2Matrix(Y,Z))
-#
-#
 
 
 
