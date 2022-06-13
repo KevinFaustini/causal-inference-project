@@ -105,7 +105,8 @@ mat=np.zeros((12,12))
 for i in range(len(PairList1)):
     mat[PairList1[i][0],PairList1[i][1]]=DIList[i]
 
-Matrix_frame = pd.DataFrame(mat)
+Matrix_frame1 = pd.DataFrame(mat)
+Matrix_frame=Matrix_frame1.round(decimals=3)
 print(Matrix_frame.to_latex())
 #Matrix_frame.to_excel("Matrix.xlsx")
 
