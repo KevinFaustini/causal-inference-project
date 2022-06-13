@@ -92,6 +92,9 @@ for i in range(len(Edgesxy)):
     if Edgesxy[i]==1:
         LinkedNode.append(PairList1[i])
 DG.add_edges_from(LinkedNode)
+DG.add_node(3)
+DG.add_node(10)
+DG.add_node(11)
 nx.draw_circular(DG, with_labels=True, font_weight='bold')
 plt.savefig("GraphEx2.png")
 
