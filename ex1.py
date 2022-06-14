@@ -18,8 +18,8 @@ def SGS(D):
     V = [*range(p)] # [0, 1, 2, 3, ... , p-1]
     sepSets = []
 
-    #G_powerset = powerset([*range(p)])
-
+    n_ci_test = 0
+    
     for X in V:
         for Y in range(X,p): #avoids computations for say (4,2) since it has already been done for (2,4)
             if X != Y :
@@ -29,9 +29,9 @@ def SGS(D):
                 V_no_XY.remove(X)
                 V_no_XY.remove(Y)
 
-                #for Z in remove_from_pset(G_powerset, X, Y):
                 for Z in powerset(V_no_XY): 
                     indep_X_Y = ci_test(D, X, Y, Z)
+                    n_ci_test += 1
 
                     if indep_X_Y:
                         sepSets.append(((X,Y), Z))
@@ -42,7 +42,7 @@ def SGS(D):
                     G[Y,X] = 1
 
 
-    return G, sepSets
+    return G, sepSets, n_ci_test
 
 def PC1(D):
     p = D.shape[1] 
@@ -50,8 +50,10 @@ def PC1(D):
     V = [*range(p)]
     d = 0
     sepSets = []
+    n_ci_test = 0
 
     # this convert our graph matrix to its adjacency list representation as a dictionary, 
+    # (so that we easily get a list of a vertex's neighbours)
     # then it gets its values (so the list of neighbours of each vertex), then sorts
     # it so that the first item is the list of neighbours of the vertex who has the most 
     # neighbours. And then we compare its length to d (=step 4)
@@ -60,12 +62,14 @@ def PC1(D):
             for Y in range(X, p):
                 if X == Y:
                     G[X,X] = 0
-                else:
+                elif X != Y and G[X,Y] != 0:
                     V_no_XY = V[:]
                     V_no_XY.remove(X)
                     V_no_XY.remove(Y)
 
-                    for Z in [elem for elem in powerset(V_no_XY) if len(elem) == d]:                   
+                    for Z in powerset(V_no_XY, d): 
+                        
+                        n_ci_test +=1
                         if ci_test(D, X, Y, Z):
                             sepSets.append(((X,Y), Z))
                             G[X,Y] = 0
@@ -73,7 +77,7 @@ def PC1(D):
                             break 
         d += 1
 
-    return G, sepSets
+    return G, sepSets, n_ci_test
 
 def PC2(D):
     p = D.shape[1]
@@ -82,28 +86,34 @@ def PC2(D):
     V = [*range(p)] 
     sepSets = []
 
-    # for X in V:
-    #     for Y in range(X, p):
-    #         if X != Y:
-    #             V_no_XY = V[:]
-    #             V_no_XY.remove(X)
-    #             V_no_XY.remove(Y)
+    n_ci_test = 0
 
-    #             if not ci_test(D, X, Y, V_no_XY):
-    #                 G[X,Y] = 1
-    #                 G[Y,X] = 1   
+    for X in V:
+        for Y in range(X, p):
+            if X != Y:
+                V_no_XY = V[:]
+                V_no_XY.remove(X)
+                V_no_XY.remove(Y)
+
+                n_ci_test += 1
+
+                if not ci_test(D, X, Y, V_no_XY):
+                    G[X,Y] = 1
+                    G[Y,X] = 1   
 
     d = 0
 
     while len(sorted(convert_adj_matrix_to_list(G).values(), key=len, reverse=True)[0]) >= d:
         for X in V:
             for Y in range(X, p):
-                if X != Y and G[X,Y] != 1:
+                if X != Y and G[X,Y] != 0:
                     V_no_XY = V[:]
                     V_no_XY.remove(X)
                     V_no_XY.remove(Y)
 
-                    for Z in [elem for elem in powerset(V_no_XY) if len(elem) == d]:                   
+                    for Z in powerset(V_no_XY, d):  
+
+                        n_ci_test +=1                 
                         if ci_test(D, X, Y, Z):
                             sepSets.append(((X,Y), Z))
                             G[X,Y] = 0
@@ -111,7 +121,7 @@ def PC2(D):
                             break 
         d += 1
 
-    return G, sepSets             
+    return G, sepSets, n_ci_test           
 
 
 def orient_edges(adj_mat, sepSets):
